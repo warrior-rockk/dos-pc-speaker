@@ -1,3 +1,3 @@
-# DOS Cross-Compile multi-platform VSCode Template
+# DOS functions to play music on pc speaker
 
-* Uses Allegro
+* Example on Allegro
