@@ -28,7 +28,9 @@ for i,file in enumerate(files_mid):
     ticks_per_beat = file.ticks_per_beat
     
     for track in file.tracks:
+        # debug info of track
         print(track)
+        
         for msg in track:
             if msg.type == 'track_name' and midi_name == "":
                 midi_name = msg.name
@@ -40,26 +42,19 @@ for i,file in enumerate(files_mid):
                 # get clocks per tick
                 clocks_per_click = msg.clocks_per_click
             if msg.type == 'note_on':
-                # if note on has delta time
+                # if note on has delta time means that comes from time on silence
                 if msg.time > 0:
-                    # output the duration of silence (note 0) and note start
-                    #output += str(0) + '-' + str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)) + "," + str(msg.note) + '-'
-                    #lstNotes.append(0)
+                    # add the silence note (0) and the duration of silence
+                    lstNotes.append(0)
                     lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
+                    # add the note
                     lstNotes.append(str(msg.note))
                 else:
-                    #output += str(msg.note) + '-'
+                    # add the note
                     lstNotes.append(str(msg.note))
-                    lstDurations.append(0)
             if msg.type == 'note_off':
-                # output the duration of note (miliseconds)
-                #output += str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)) + ","    
+                # add the duration of note (miliseconds)
                 lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
-    
-    #print(lstNotes)
-    #print(lstDurations)
-    #files_txt[i].write("int8_t notes[] = " + str(lstNotes).replace("[", "{") + ";\n")
-    #files_txt[i].write("uint16_t durations[] = " + str(lstDurations).replace("[", "{") + ";\n")
     
     # Print notes
     files_txt[i].write("int8_t _%s_notes[] = {" % midi_name)
@@ -73,9 +68,9 @@ for i,file in enumerate(files_mid):
         files_txt[i].write(str(item) + ",")
     files_txt[i].write("0};")
 
-    #files_txt[i].write(output[:-1])
     files_txt[i].close()
 
+    # clear the data for next file
     lstNotes.clear()
     lstDurations.clear()
     midi_name = ""

@@ -183,10 +183,10 @@ int main()
     }
 
     //load song
-    //notes = _title_notes;
-    //durations = _title_durations;
-    notes = _warcom_notes;
-    durations = _warcom_durations;
+    notes = _title_notes;
+    durations = _title_durations;
+    //notes = _warcom_notes;
+    //durations = _warcom_durations;
 
     //install timer interrupt
     install_timer();
