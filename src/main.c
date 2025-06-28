@@ -187,6 +187,8 @@ int main()
     durations = _title_durations;
     //notes = _warcom_notes;
     //durations = _warcom_durations;
+    //notes = _Foxtrot_notes;
+    //durations = _Foxtrot_durations;
 
     //install timer interrupt
     install_timer();
