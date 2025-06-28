@@ -1,6 +1,7 @@
 import math
 import mido
 import os
+import sys
 
 files_mid = []
 files_txt = []
@@ -12,6 +13,9 @@ clocks_per_click = 0
 bpm = 0
 lstNotes = []
 lstDurations = []
+
+# change cwd to script path
+os.chdir(sys.path[0])
 
 for file in os.listdir(os.getcwd()):
     if file.endswith('.mid'):
