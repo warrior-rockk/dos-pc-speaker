@@ -13,6 +13,7 @@ clocks_per_click = 0
 bpm = 0
 lstNotes = []
 lstDurations = []
+midi_name = ""
 
 # change cwd to script path
 os.chdir(sys.path[0])
@@ -29,6 +30,8 @@ for i,file in enumerate(files_mid):
     for track in file.tracks:
         print(track)
         for msg in track:
+            if msg.type == 'track_name' and midi_name == "":
+                midi_name = msg.name
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
                 # calculate bpm
@@ -59,13 +62,13 @@ for i,file in enumerate(files_mid):
     #files_txt[i].write("uint16_t durations[] = " + str(lstDurations).replace("[", "{") + ";\n")
     
     # Print notes
-    files_txt[i].write("int8_t notes[] = {")
+    files_txt[i].write("int8_t _%s_notes[] = {" % midi_name)
     for item in lstNotes:
         files_txt[i].write(str(item) + ",")
     files_txt[i].write("-1};\n")
     
     # Print durations
-    files_txt[i].write("uint16_t durations[] = {")
+    files_txt[i].write("uint16_t _%s_durations[] = {" % midi_name)
     for item in lstDurations:
         files_txt[i].write(str(item) + ",")
     files_txt[i].write("0};")
@@ -75,3 +78,4 @@ for i,file in enumerate(files_mid):
 
     lstNotes.clear()
     lstDurations.clear()
+    midi_name = ""
