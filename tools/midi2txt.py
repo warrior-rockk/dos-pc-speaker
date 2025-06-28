@@ -27,6 +27,7 @@ for i,file in enumerate(files_mid):
     ticks_per_beat = file.ticks_per_beat
     
     for track in file.tracks:
+        print(track)
         for msg in track:
             if msg.type == 'set_tempo':
                 tempo = msg.tempo
@@ -40,19 +41,20 @@ for i,file in enumerate(files_mid):
                 if msg.time > 0:
                     # output the duration of silence (note 0) and note start
                     #output += str(0) + '-' + str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)) + "," + str(msg.note) + '-'
-                    lstNotes.append(0)
+                    #lstNotes.append(0)
                     lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
                     lstNotes.append(str(msg.note))
                 else:
                     #output += str(msg.note) + '-'
                     lstNotes.append(str(msg.note))
+                    lstDurations.append(0)
             if msg.type == 'note_off':
                 # output the duration of note (miliseconds)
                 #output += str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)) + ","    
                 lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
     
-    print(lstNotes)
-    print(lstDurations)
+    #print(lstNotes)
+    #print(lstDurations)
     #files_txt[i].write("int8_t notes[] = " + str(lstNotes).replace("[", "{") + ";\n")
     #files_txt[i].write("uint16_t durations[] = " + str(lstDurations).replace("[", "{") + ";\n")
     
@@ -70,3 +72,6 @@ for i,file in enumerate(files_mid):
 
     #files_txt[i].write(output[:-1])
     files_txt[i].close()
+
+    lstNotes.clear()
+    lstDurations.clear()
