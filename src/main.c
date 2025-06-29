@@ -4,163 +4,8 @@
 
 #include "allegro.h"
 
+#include "pcspeaker.h"
 #include "songs.h"
-
-int music_pos = 0;
-int prev_note = 0;
-int music_state = 0;
-int music_duration = 0;
-
-//test export
-uint16_t freqList[] =
-    {
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-0,
-15,
-16,
-17,
-18,
-19,
-21,
-22,
-23,
-25,
-26,
-28,
-29,
-31,
-33,
-35,
-37,
-39,
-41,
-44,
-46,
-49,
-52,
-55,
-58,
-62,
-65,
-69,
-73,
-78,
-82,
-87,
-92,
-98,
-104,
-110,
-117,
-123,
-131,
-139,
-147,
-156,
-165,
-175,
-185,
-196,
-208,
-220,
-233,
-247,
-262,
-277,
-294,
-311,
-330,
-349,
-370,
-392,
-415,
-440,
-466,
-494,
-523,
-554,
-587,
-622,
-659,
-698,
-740,
-784,
-831,
-880,
-932,
-988,
-1047,
-1109,
-1175,
-1245,
-1319,
-1397,
-1480,
-1568,
-1661,
-1760,
-1865,
-1976,
-2093,
-2218,
-2349,
-2489,
-
-};
-
-int8_t *notes;
-uint16_t *durations;
-
-//update music timer callback
-static void update_music(void)
-{
-    if (notes[music_pos] >= 0)  //not end of song
-    {
-        //check note
-        if (notes[music_pos] > 0)   //if note <> silence
-        {
-            if (notes[music_pos] != prev_note)
-            {
-                sound(freqList[notes[music_pos]]);               
-                prev_note = notes[music_pos];
-            }            
-        }
-        else
-        {
-            //silence
-            nosound();
-            prev_note = notes[music_pos];
-        }
-
-        //check duration
-        if (music_duration >= durations[music_pos])
-            {
-                music_pos++;
-                if (notes[music_pos] == prev_note)
-                {
-                    nosound();
-                    prev_note = 0;
-                }
-                //prev_note = notes[music_pos];
-                music_duration = 0;
-            }
-            else
-                music_duration += 10; //50ms each tick
-    }
-    else
-        //end of song
-        nosound();    
-}
-END_OF_FUNCTION(update_music);
 
 int main()
 {    
@@ -183,17 +28,12 @@ int main()
     }
 
     //load song
-    notes = _title_notes;
-    durations = _title_durations;
-    //notes = _warcom_notes;
-    //durations = _warcom_durations;
-    //notes = _Foxtrot_notes;
-    //durations = _Foxtrot_durations;
+    pc_speaker_load_song(_warcom_notes, _warcom_durations);
 
     //install timer interrupt
     install_timer();
-    LOCK_FUNCTION(update_music);
-    install_int(update_music, 10);   //50ms
+    LOCK_FUNCTION(pc_speaker_update_callback);
+    install_int(pc_speaker_update_callback, 10);   //50ms
 
     /* load bitmap */
     BITMAP *bmp = load_bmp("res/logo.bmp", desktop_palette);
