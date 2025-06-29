@@ -4,7 +4,7 @@ import os
 import sys
 
 files_mid = []
-files_txt = []
+#files_txt = []
 
 # info vars
 tempo = 0
@@ -18,10 +18,14 @@ midi_name = ""
 # change cwd to script path
 os.chdir(sys.path[0])
 
+# create songs file header
+output_file = open(os.getcwd() + "/../src/songs.h", "w")
+output_file.write("#include <stdint.h>\n\n")
+
 for file in os.listdir(os.getcwd()):
     if file.endswith('.mid'):
         files_mid.append(mido.MidiFile(file))
-        files_txt.append(open(file.split('.')[0]+'.txt','w'))
+        #files_txt.append(open(file.split('.')[0]+'.txt','w'))
 
 for i,file in enumerate(files_mid):
     output = ''
@@ -30,7 +34,7 @@ for i,file in enumerate(files_mid):
     for track in file.tracks:
         # debug info of track
         print(track)
-        
+
         for msg in track:
             if msg.type == 'track_name' and midi_name == "":
                 midi_name = msg.name
@@ -57,20 +61,21 @@ for i,file in enumerate(files_mid):
                 lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
     
     # Print notes
-    files_txt[i].write("int8_t _%s_notes[] = {" % midi_name)
+    output_file.write("int8_t _%s_notes[] = {" % midi_name)
     for item in lstNotes:
-        files_txt[i].write(str(item) + ",")
-    files_txt[i].write("-1};\n")
+        output_file.write(str(item) + ",")
+    output_file.write("-1};\n")
     
     # Print durations
-    files_txt[i].write("uint16_t _%s_durations[] = {" % midi_name)
+    output_file.write("uint16_t _%s_durations[] = {" % midi_name)
     for item in lstDurations:
-        files_txt[i].write(str(item) + ",")
-    files_txt[i].write("0};")
-
-    files_txt[i].close()
+        output_file.write(str(item) + ",")
+    output_file.write("0};\n")
 
     # clear the data for next file
     lstNotes.clear()
     lstDurations.clear()
     midi_name = ""
+
+# close output file
+output_file.close()
