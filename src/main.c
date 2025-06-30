@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <pc.h>
 
 #include "allegro.h"
 
@@ -28,12 +27,12 @@ int main()
     }
 
     //load song
-    pc_speaker_load_song(_warcom_notes, _warcom_durations);
+    pc_speaker_load_song(_title_notes, _title_durations);
 
     //install timer interrupt
     install_timer();
-    LOCK_FUNCTION(pc_speaker_update_callback);
-    install_int(pc_speaker_update_callback, 10);   //50ms
+    //LOCK_FUNCTION(pc_speaker_update);
+    install_int(pc_speaker_update, 10);   //50ms
 
     /* load bitmap */
     BITMAP *bmp = load_bmp("res/logo.bmp", desktop_palette);

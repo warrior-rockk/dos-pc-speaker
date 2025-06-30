@@ -3,7 +3,9 @@
         "*.h": "c",
         "allegro.h": "c",
         "ALLEGRO.H": "cpp",
-        "ASTDINT.H": "cpp"
+        "ASTDINT.H": "cpp",
+        "ALDJGPP.H": "cpp",
+        "TIMER.H": "cpp"
     }
     
 }
