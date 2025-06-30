@@ -6,6 +6,7 @@
 static int music_pos = 0;
 static int prev_note = 0;
 static int music_duration = 0;
+static uint8_t loop = 0;
 
 int8_t *notes;
 uint16_t *durations;
@@ -152,15 +153,27 @@ void pc_speaker_update()
                 music_duration += 10; //50ms each tick
     }
     else
+    {
         //end of song
-        nosound();    
+        nosound(); 
+        //check loop
+        if (loop)
+        {
+            //reset song
+            music_pos = 0;
+            prev_note = 0;
+            music_duration = 0;   
+        }
+    }
+
 }
 
-void pc_speaker_load_song(int8_t *_notes, uint16_t *_durations)
+void pc_speaker_play_song(int8_t *_notes, uint16_t *_durations, uint8_t _loop)
 {
     //load song
     notes = _notes;
     durations = _durations;
+    loop = _loop;
     //notes = _warcom_notes;
     //durations = _warcom_durations;
     //notes = _Foxtrot_notes;

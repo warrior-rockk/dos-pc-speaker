@@ -27,7 +27,7 @@ int main()
     }
 
     //load song
-    pc_speaker_load_song(_title_notes, _title_durations);
+    pc_speaker_play_song(_title_notes, _title_durations, 1);
 
     //install timer interrupt
     install_timer();
