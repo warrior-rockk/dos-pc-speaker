@@ -7,6 +7,7 @@ static int music_pos = 0;
 static int prev_note = 0;
 static int music_duration = 0;
 static uint8_t loop = 0;
+static uint8_t play = 0;
 
 int8_t *notes;
 uint16_t *durations;
@@ -119,53 +120,57 @@ static uint16_t freqList[] =
 //update music timer callback
 void pc_speaker_update()
 {
-    if (notes[music_pos] >= 0)  //not end of song
+    if (play)
     {
-        //check note
-        if (notes[music_pos] > 0)   //if note <> silence
+        if (notes[music_pos] >= 0)  //not end of song
         {
-            if (notes[music_pos] != prev_note)
+            //check note
+            if (notes[music_pos] > 0)   //if note <> silence
             {
-                sound(freqList[notes[music_pos]]);               
+                if (notes[music_pos] != prev_note)
+                {
+                    sound(freqList[notes[music_pos]]);               
+                    prev_note = notes[music_pos];
+                }            
+            }
+            else
+            {
+                //silence
+                nosound();
                 prev_note = notes[music_pos];
-            }            
+            }
+
+            //check duration
+            if (music_duration >= durations[music_pos])
+                {
+                    music_pos++;
+                    if (notes[music_pos] == prev_note)
+                    {
+                        nosound();
+                        prev_note = 0;
+                    }
+                    //prev_note = notes[music_pos];
+                    music_duration = 0;
+                }
+                else
+                    music_duration += 10; //50ms each tick
         }
         else
         {
-            //silence
-            nosound();
-            prev_note = notes[music_pos];
-        }
-
-        //check duration
-        if (music_duration >= durations[music_pos])
+            //end of song
+            nosound(); 
+            //check loop
+            if (loop)
             {
-                music_pos++;
-                if (notes[music_pos] == prev_note)
-                {
-                    nosound();
-                    prev_note = 0;
-                }
-                //prev_note = notes[music_pos];
-                music_duration = 0;
+                //reset song
+                music_pos = 0;
+                prev_note = 0;
+                music_duration = 0;   
             }
-            else
-                music_duration += 10; //50ms each tick
+        }
     }
     else
-    {
-        //end of song
-        nosound(); 
-        //check loop
-        if (loop)
-        {
-            //reset song
-            music_pos = 0;
-            prev_note = 0;
-            music_duration = 0;   
-        }
-    }
-
+        nosound();
 }
 
 void pc_speaker_play_song(int8_t *_notes, uint16_t *_durations, uint8_t _loop)
@@ -173,9 +178,31 @@ void pc_speaker_play_song(int8_t *_notes, uint16_t *_durations, uint8_t _loop)
     //load song
     notes = _notes;
     durations = _durations;
+    
+    music_pos = 0;
+    prev_note = 0;
+    music_duration = 0;
+
     loop = _loop;
-    //notes = _warcom_notes;
-    //durations = _warcom_durations;
-    //notes = _Foxtrot_notes;
-    //durations = _Foxtrot_durations;
+    play = 1;    
+}
+
+void pc_speaker_stop_song()
+{
+    nosound();
+    play = 0;
+    music_pos = 0;
+    prev_note = 0;
+    music_duration = 0;
+}
+
+void pc_speaker_pause_song()
+{
+    nosound();
+    play = 0;    
+}
+
+void pc_speaker_resume_song()
+{
+    play = 1;    
 }

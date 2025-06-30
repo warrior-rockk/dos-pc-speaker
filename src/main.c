@@ -59,12 +59,20 @@ int main()
     /* you must always release bitmaps before calling any input functions */
     release_screen();
 
-    
+    while (!key[KEY_ESC])
+    {
+        if (key[KEY_P])
+            pc_speaker_pause_song();
+        if (key[KEY_R])
+            pc_speaker_resume_song();    
+        if (key[KEY_S])
+            pc_speaker_stop_song();
+        if (key[KEY_SPACE])
+            pc_speaker_play_song(_title_notes, _title_durations, 1);
+    }    
 
     /* wait for a key press */
-    readkey();
-
-    
+    //readkey();
 
     return 0;
 }
