@@ -4,9 +4,8 @@ import os
 import sys
 
 files_mid = []
-#files_txt = []
 
-# info vars
+# initialize vars
 tempo = 0
 ticks_per_beat = 0
 clocks_per_click = 0
@@ -18,28 +17,34 @@ midi_name = ""
 # change cwd to script path
 os.chdir(sys.path[0])
 
-# create songs file header
+# open/create songs file header
 output_file = open(os.getcwd() + "/../src/songs.h", "w")
+# write header
 output_file.write("#include <stdint.h>\n\n")
 
+# append to list all .mid files on current script dir
 for file in os.listdir(os.getcwd()):
     if file.endswith('.mid'):
         files_mid.append(mido.MidiFile(file))
-        #files_txt.append(open(file.split('.')[0]+'.txt','w'))
 
+# run for midi files list
 for i,file in enumerate(files_mid):
-    output = ''
     ticks_per_beat = file.ticks_per_beat
     
+	# run for tracks on midi file
     for track in file.tracks:
-        # debug info of track
+        
+		# print debug info of track
         print(track)
 
+		# run for midi msg on current track
         for msg in track:
-            if msg.type == 'track_name' and midi_name == "":
-                midi_name = msg.name
+            if msg.type == 'track_name' and midi_track_name == "":
+                # get midi name of track
+				midi_track_name = msg.name
             if msg.type == 'set_tempo':
-                tempo = msg.tempo
+                # get tempo
+				tempo = msg.tempo
                 # calculate bpm
                 bpm = mido.tempo2bpm(tempo)
             if msg.type == 'time_signature':
@@ -60,14 +65,14 @@ for i,file in enumerate(files_mid):
                 # add the duration of note (miliseconds)
                 lstDurations.append(str(math.trunc(mido.tick2second(msg.time, ticks_per_beat, tempo) * 1000)))
     
-    # Print notes
-    output_file.write("int8_t _%s_notes[] = {" % midi_name)
+    # write notes of track
+    output_file.write("int8_t _%s_notes[] = {" % midi_track_name)
     for item in lstNotes:
         output_file.write(str(item) + ",")
     output_file.write("-1};\n")
     
-    # Print durations
-    output_file.write("uint16_t _%s_durations[] = {" % midi_name)
+    # write durations of each note of track
+    output_file.write("uint16_t _%s_durations[] = {" % midi_track_name)
     for item in lstDurations:
         output_file.write(str(item) + ",")
     output_file.write("0};\n")
@@ -75,7 +80,7 @@ for i,file in enumerate(files_mid):
     # clear the data for next file
     lstNotes.clear()
     lstDurations.clear()
-    midi_name = ""
+    midi_track_name = ""
 
 # close output file
 output_file.close()

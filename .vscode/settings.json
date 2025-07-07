@@ -5,7 +5,8 @@
         "ALLEGRO.H": "cpp",
         "ASTDINT.H": "cpp",
         "ALDJGPP.H": "cpp",
-        "TIMER.H": "cpp"
+        "TIMER.H": "cpp",
+        "COLOR.H": "cpp"
     }
     
 }
