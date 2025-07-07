@@ -12,7 +12,7 @@ clocks_per_click = 0
 bpm = 0
 lstNotes = []
 lstDurations = []
-midi_name = ""
+midi_track_name = ""
 
 # change cwd to script path
 os.chdir(sys.path[0])
@@ -41,10 +41,10 @@ for i,file in enumerate(files_mid):
         for msg in track:
             if msg.type == 'track_name' and midi_track_name == "":
                 # get midi name of track
-				midi_track_name = msg.name
+                midi_track_name = msg.name
             if msg.type == 'set_tempo':
                 # get tempo
-				tempo = msg.tempo
+                tempo = msg.tempo
                 # calculate bpm
                 bpm = mido.tempo2bpm(tempo)
             if msg.type == 'time_signature':
