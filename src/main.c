@@ -68,7 +68,7 @@ int main()
         if (key[KEY_S])
             pc_speaker_stop_song();
         if (key[KEY_SPACE])
-            pc_speaker_play_song(_title_notes, _title_durations, 1);
+            pc_speaker_play_song(_warcom_notes, _warcom_durations, 0);
     }    
 
     /* wait for a key press */
