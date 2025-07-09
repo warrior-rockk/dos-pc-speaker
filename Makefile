@@ -56,7 +56,7 @@ LDFLAGS 			:= -fgnu89-inline -L ${LIBS_DIR} -lalleg
 all: debug release
 
 #main targets
-debug: ${DEBUG_BIN_DIR}${APP} ${DEBUG_RESOURCES}
+debug: ${DEBUG_BIN_DIR}${APP} ${DEBUG_RESOURCES} 
 release: ${RELEASE_BIN_DIR}${APP} ${RELEASE_RESOURCES}
 
 #binary target (debug)
@@ -68,7 +68,10 @@ ${DEBUG_BIN_DIR}${APP}: ${DEBUG_OBJS}
 	
 	@echo "## Copy static files"
 	cp -r ${STATIC_DIR}/*.* ${DEBUG_BIN_DIR}
-	
+
+#force to generate songs.h (debug)
+${DEBUG_OBJS_DIR}main.o: songs.h
+
 #compile objects generating dependency files (debug)
 ${DEBUG_OBJS_DIR}%.o: ${SRC_DIR}%.${SRC_EXT}
 	mkdir -p ${DEBUG_OBJS_DIR}	
@@ -88,7 +91,10 @@ ${RELEASE_BIN_DIR}${APP}: ${RELEASE_OBJS}
 
 	@echo "## Copy static files"
 	cp -r ${STATIC_DIR}/*.* ${RELEASE_BIN_DIR}
-	
+
+#force to generate songs.h (debug)
+${RELEASE_OBJS_DIR}main.o: songs.h
+
 #compile objects generating dependency files (release)
 ${RELEASE_OBJS_DIR}%.o: ${SRC_DIR}%.${SRC_EXT}
 	mkdir -p ${RELEASE_OBJS_DIR}
@@ -98,6 +104,11 @@ ${RELEASE_OBJS_DIR}%.o: ${SRC_DIR}%.${SRC_EXT}
 ${RELEASE_RES_DIR}%: ${RESOURCES_DIR}%
 	mkdir -p  $(@D)
 	cp $< $@
+
+#convert midi to .h
+songs.h: 
+	@echo "## Converting midi to songs.h"
+	python3 ./tools/midi2txt.py
 
 #dependency includes
 -include ${DEBUG_OBJS_DIR}*.d
