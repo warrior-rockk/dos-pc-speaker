@@ -11,6 +11,8 @@
 #include "allegro.h"
 #include "pcspeaker.h"
 
+#define _TIME_OFFSET 1 //ms
+
 //internal vars
 static int _music_pos = 0;
 static int _prev_note = 0;
@@ -164,7 +166,7 @@ static void pc_speaker_update()
                     _music_duration = 0;
                 }
                 else
-                    _music_duration += _timeResolution; //50ms each tick
+                    _music_duration += _timeResolution + _TIME_OFFSET;
         }
         else
         {
