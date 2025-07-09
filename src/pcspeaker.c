@@ -1,5 +1,14 @@
+/********************************************************************
+* PC-Speaker Allegro DOS Driver
+*
+* 09/07/2025
+* Warcom Soft. - warrior.rockk@gmail.com
+********************************************************************/
+
 #include <pc.h>
 #include <stdint.h>
+
+#include "allegro.h"
 
 #include "pcspeaker.h"
 
@@ -8,6 +17,7 @@ static int prev_note = 0;
 static int music_duration = 0;
 static uint8_t loop = 0;
 static uint8_t play = 0;
+static long timeResolution = 0;
 
 int8_t *notes;
 uint16_t *durations;
@@ -118,7 +128,7 @@ static uint16_t freqList[] =
 };
 
 //update music timer callback
-void pc_speaker_update()
+static void pc_speaker_update()
 {
     if (play)
     {
@@ -153,7 +163,7 @@ void pc_speaker_update()
                     music_duration = 0;
                 }
                 else
-                    music_duration += 10; //50ms each tick
+                    music_duration += timeResolution; //50ms each tick
         }
         else
         {
@@ -171,6 +181,14 @@ void pc_speaker_update()
     }
     else
         nosound();
+}
+END_OF_FUNCTION(pc_speaker_update);
+
+void pc_speaker_init(long _timeResolution)
+{
+    timeResolution = _timeResolution;
+    LOCK_FUNCTION(pc_speaker_update);
+    install_int(pc_speaker_update, timeResolution);   
 }
 
 void pc_speaker_play_song(int8_t *_notes, uint16_t *_durations, uint8_t _loop)

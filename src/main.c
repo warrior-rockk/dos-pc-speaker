@@ -26,13 +26,14 @@ int main()
         }
     }
 
-    //load song
-    pc_speaker_play_song(_title2_notes, _title2_durations, 1);
-
     //install timer interrupt
     install_timer();
-    //LOCK_FUNCTION(pc_speaker_update);
-    install_int(pc_speaker_update, 10);   //50ms
+    
+    //inits pc speaker
+    pc_speaker_init(10);
+    
+    //load song
+    pc_speaker_play_song(_title2_notes, _title2_durations, 1);
 
     /* load bitmap */
     BITMAP *bmp = load_bmp("res/logo.bmp", desktop_palette);
