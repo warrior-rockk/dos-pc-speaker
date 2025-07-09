@@ -1,6 +1,6 @@
-## DOS PC Speaker driver to play music on pc speaker
+# DOS PC Speaker driver to play music on pc speaker
 
-# How it works
+## How it works
 
 This simple library allows to play monophonic music on pc speaker.
 It uses Allegro game library to manage time interrupt.
