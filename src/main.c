@@ -55,8 +55,8 @@ int main()
     acquire_screen();
 
     /* write some text to the screen with black letters and transparent background */
-    textout_centre_ex(screen, font, "Hello, world from DOS!", SCREEN_W/2, SCREEN_H/2, makecol(255,255,255), -1);
-
+    textout_centre_ex(screen, font, "PC SPEAKER Rules!", SCREEN_W/2, SCREEN_H/2, makecol(255,255,255), -1);
+    
     /* you must always release bitmaps before calling any input functions */
     release_screen();
 

@@ -12,7 +12,7 @@
 //inits the pc speaker interrupt (timeResolution on ms)
 void pc_speaker_init(long timeResolution);
 //plays song on pc speaker (loops n times or 0: infinite)
-void pc_speaker_play_song(int8_t *notes_, uint16_t *durations_, uint8_t _loop);
+void pc_speaker_play_song(int8_t *notes, uint16_t *durations, uint8_t loop);
 //stops song on pc speaker
 void pc_speaker_stop_song();
 //pauses song on pc speaker

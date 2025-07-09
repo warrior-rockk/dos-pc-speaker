@@ -9,21 +9,22 @@
 #include <stdint.h>
 
 #include "allegro.h"
-
 #include "pcspeaker.h"
 
-static int music_pos = 0;
-static int prev_note = 0;
-static int music_duration = 0;
-static uint8_t loop = 0;
-static uint8_t play = 0;
-static long timeResolution = 0;
+//internal vars
+static int _music_pos = 0;
+static int _prev_note = 0;
+static int _music_duration = 0;
+static uint8_t _loop = 0;
+static uint8_t _play = 0;
+static long _timeResolution = 0;
 
-int8_t *notes;
-uint16_t *durations;
+//pointer to song data
+int8_t *_notes;
+uint16_t *_durations;
 
 //frequency notes 
-static uint16_t freqList[] =
+static uint16_t _freqList[] =
 {
 0,
 0,
@@ -130,52 +131,52 @@ static uint16_t freqList[] =
 //update music timer callback
 static void pc_speaker_update()
 {
-    if (play)
+    if (_play)
     {
-        if (notes[music_pos] >= 0)  //not end of song
+        if (_notes[_music_pos] >= 0)  //not end of song
         {
             //check note
-            if (notes[music_pos] > 0)   //if note <> silence
+            if (_notes[_music_pos] > 0)   //if note <> silence
             {
-                if (notes[music_pos] != prev_note)
+                if (_notes[_music_pos] != _prev_note)
                 {
-                    sound(freqList[notes[music_pos]]);               
-                    prev_note = notes[music_pos];
+                    sound(_freqList[_notes[_music_pos]]);               
+                    _prev_note = _notes[_music_pos];
                 }            
             }
             else
             {
                 //silence
                 nosound();
-                prev_note = notes[music_pos];
+                _prev_note = _notes[_music_pos];
             }
 
             //check duration
-            if (music_duration >= durations[music_pos])
+            if (_music_duration >= _durations[_music_pos])
                 {
-                    music_pos++;
-                    if (notes[music_pos] == prev_note)
+                    _music_pos++;
+                    if (_notes[_music_pos] == _prev_note)
                     {
                         nosound();
-                        prev_note = 0;
+                        _prev_note = 0;
                     }
                     //prev_note = notes[music_pos];
-                    music_duration = 0;
+                    _music_duration = 0;
                 }
                 else
-                    music_duration += timeResolution; //50ms each tick
+                    _music_duration += _timeResolution; //50ms each tick
         }
         else
         {
             //end of song
             nosound(); 
             //check loop
-            if (loop)
+            if (_loop)
             {
                 //reset song
-                music_pos = 0;
-                prev_note = 0;
-                music_duration = 0;   
+                _music_pos = 0;
+                _prev_note = 0;
+                _music_duration = 0;   
             }
         }
     }
@@ -184,43 +185,43 @@ static void pc_speaker_update()
 }
 END_OF_FUNCTION(pc_speaker_update);
 
-void pc_speaker_init(long _timeResolution)
+void pc_speaker_init(long timeResolution)
 {
-    timeResolution = _timeResolution;
+    _timeResolution = timeResolution;
     LOCK_FUNCTION(pc_speaker_update);
-    install_int(pc_speaker_update, timeResolution);   
+    install_int(pc_speaker_update, _timeResolution);   
 }
 
-void pc_speaker_play_song(int8_t *_notes, uint16_t *_durations, uint8_t _loop)
+void pc_speaker_play_song(int8_t *notes, uint16_t *durations, uint8_t loop)
 {
     //load song
-    notes = _notes;
-    durations = _durations;
+    _notes = notes;
+    _durations = durations;
     
-    music_pos = 0;
-    prev_note = 0;
-    music_duration = 0;
+    _music_pos = 0;
+    _prev_note = 0;
+    _music_duration = 0;
 
-    loop = _loop;
-    play = 1;    
+    _loop = loop;
+    _play = 1;    
 }
 
 void pc_speaker_stop_song()
 {
     nosound();
-    play = 0;
-    music_pos = 0;
-    prev_note = 0;
-    music_duration = 0;
+    _play = 0;
+    _music_pos = 0;
+    _prev_note = 0;
+    _music_duration = 0;
 }
 
 void pc_speaker_pause_song()
 {
     nosound();
-    play = 0;    
+    _play = 0;    
 }
 
 void pc_speaker_resume_song()
 {
-    play = 1;    
+    _play = 1;    
 }
