@@ -1,21 +1,26 @@
+/********************************************************************
+* PC Speaker Demo
+*
+* 09/07/2025
+* Warcom Soft. - warrior.rockk@gmail.com
+********************************************************************/
 #include <stdint.h>
 #include <stdio.h>
 
 #include "allegro.h"
-
 #include "pcspeaker.h"
 #include "songs.h"
 
 int main()
 {    
-    /* you should always do this at the start of Allegro programs */
+    //init alegro
     if (allegro_init() != 0)
         return 1;
 
-    /* set up the keyboard handler */
+    //set up the keyboard handler
     install_keyboard(); 
 
-    /* set a graphics mode sized 320x200 */
+    //set a graphics mode sized 320x200
     if (set_gfx_mode(GFX_AUTODETECT, 320, 200, 0, 0) != 0) 
     {
         if (set_gfx_mode(GFX_SAFE, 320, 200, 0, 0) != 0) 
@@ -35,30 +40,25 @@ int main()
     //load song
     pc_speaker_play_song(_title2_notes, _title2_durations, 1);
 
-    /* load bitmap */
+    //load logo bitmap
     BITMAP *bmp = load_bmp("res/logo.bmp", desktop_palette);
     
-    /* set the color palette */
+    //set the color palette
     set_palette(desktop_palette);
 
-    /* clear the screen to white */
-    clear_to_color(screen, 0);
-    
-    /* blit bitmap*/
+    //blit bitmap
     if (bmp)
         draw_sprite(screen, bmp, (SCREEN_W>>1) - ((bmp->w)>>1), (SCREEN_H>>1) - ((bmp->h)>>1));
 
-    /* you don't need to do this, but on some platforms (eg. Windows) things
-    * will be drawn more quickly if you always acquire the screen before
-    * trying to draw onto it.
-    */
-    acquire_screen();
-
-    /* write some text to the screen with black letters and transparent background */
-    textout_centre_ex(screen, font, "PC SPEAKER Rules!", SCREEN_W/2, SCREEN_H/2, makecol(255,255,255), -1);
+    //write text
+    textout_centre_ex(screen, font, "PC SPEAKER Rules!", SCREEN_W/2, 60, makecol(255,0,255), -1);
     
-    /* you must always release bitmaps before calling any input functions */
-    release_screen();
+    textout_centre_ex(screen, font, "Press \"P\" to pause song", SCREEN_W/2, 90, makecol(255,255,255), -1);
+    textout_centre_ex(screen, font, "Press \"R\" to resume song", SCREEN_W/2, 100, makecol(255,255,255), -1);
+    textout_centre_ex(screen, font, "Press \"S\" to stop song", SCREEN_W/2, 110, makecol(255,255,255), -1);
+    textout_centre_ex(screen, font, "Press \"SPACE\" to change song", SCREEN_W/2, 120, makecol(255,255,255), -1);
+
+    textout_centre_ex(screen, font, "Press \"ESC\" to exit", SCREEN_W/2, 180, makecol(255,255,255), -1);
 
     while (!key[KEY_ESC])
     {
@@ -71,9 +71,6 @@ int main()
         if (key[KEY_SPACE])
             pc_speaker_play_song(_warcom_notes, _warcom_durations, 0);
     }    
-
-    /* wait for a key press */
-    //readkey();
 
     return 0;
 }
