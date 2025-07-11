@@ -41,7 +41,7 @@ RELEASE_OBJS_DIR  	:= ${BUILD_DIR}release/obj/
 RELEASE_RES_DIR		:= ${RELEASE_BIN_DIR}/res/
 #objects
 SRCS  				:= $(wildcard ${SRC_DIR}*.${SRC_EXT})
-RESOURCES			:= $(wildcard ${RESOURCES_DIR}*.*)
+RESOURCES			:= $(wildcard ${RESOURCES_DIR}*.bmp)
 DEBUG_OBJS 			:= $(patsubst ${SRC_DIR}%.${SRC_EXT}, ${DEBUG_OBJS_DIR}%.o, ${SRCS})
 DEBUG_RESOURCES		:= ${patsubst ${RESOURCES_DIR}%, ${DEBUG_RES_DIR}%,${RESOURCES}}
 RELEASE_OBJS 		:= $(patsubst ${SRC_DIR}%.${SRC_EXT}, ${RELEASE_OBJS_DIR}%.o, ${SRCS})
@@ -70,7 +70,7 @@ ${DEBUG_BIN_DIR}${APP}: ${DEBUG_OBJS}
 	cp -r ${STATIC_DIR}/*.* ${DEBUG_BIN_DIR}
 
 #force to generate songs.h (debug)
-${DEBUG_OBJS_DIR}main.o: songs.h
+${DEBUG_OBJS_DIR}demo.o: songs.h
 
 #compile objects generating dependency files (debug)
 ${DEBUG_OBJS_DIR}%.o: ${SRC_DIR}%.${SRC_EXT}
@@ -93,7 +93,7 @@ ${RELEASE_BIN_DIR}${APP}: ${RELEASE_OBJS}
 	cp -r ${STATIC_DIR}/*.* ${RELEASE_BIN_DIR}
 
 #force to generate songs.h (debug)
-${RELEASE_OBJS_DIR}main.o: songs.h
+${RELEASE_OBJS_DIR}demo.o: songs.h
 
 #compile objects generating dependency files (release)
 ${RELEASE_OBJS_DIR}%.o: ${SRC_DIR}%.${SRC_EXT}
@@ -108,7 +108,7 @@ ${RELEASE_RES_DIR}%: ${RESOURCES_DIR}%
 #convert midi to .h
 songs.h: 
 	@echo "## Converting midi to songs.h"
-	python3 ./tools/midi2txt.py
+	python3 ./tools/midi2data.py -d ${RESOURCES_DIR} -o ${SRC_DIR}songs.h
 
 #dependency includes
 -include ${DEBUG_OBJS_DIR}*.d
